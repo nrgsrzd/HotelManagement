@@ -1,0 +1,87 @@
+
+<script>
+    let feature_s_form =  document.getElementById('feature-s-form');
+
+    feature_s_form.addEventListener('submit', function(e){
+        e.preventDefault();
+        add_feature();
+    });
+    
+    function add_feature()
+    {
+        let data = new FormData();
+        data.append('name', feature_s_form.elements['feature_name'].value);
+        data.append('add_feature', '');
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "ajax/features_facilities.php", true);
+
+        xhr.onload = function(){
+            var myModal =  document.getElementById('feature-s');
+            var modal = bootstrap.Modal.getElementById(myModal);
+
+            modal.hide();
+
+            if(this.responseText == 1){
+                alert('success', 'New feature added!');
+                feature_s_form.elements['feature_name'].value='';
+                get_features();
+            }
+            else{
+                alert('error', 'Server Down!');
+            }
+        }
+
+    }
+
+    function get_features()
+    {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "ajax/features_facilities.php", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-urlencoded');
+        
+        xhr.onload = function(){
+            document.getElementById('features-data').innerHTML = this.responseText;
+        }
+
+        xhr.send('get_features');
+    }
+
+    window.onload =  function(){
+        get_features();
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rooms.php
+
+<div class="row">
+                                            <?php
+                                                $res = selectAll('features');
+                                                echo $res;
+                                                while($opt=mysqli_feth_assoc($res)){
+                                                 echo"
+                                                     <div class='col-md-3'>
+                                                         <label>
+                                                             <input type='checkbox' name='features' value='$opt[id]' class='form-check-input shadow-none'>
+                                                             $opt[name]
+                                                         </label>
+                                                     </div>
+                                                 ";
+                                                 }    
+                                            ?>
+                                        </div>
